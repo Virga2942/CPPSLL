@@ -24,13 +24,19 @@ class LOG
         //Returns the current date and time as a std::string
         std::string getTime()
         {
-            std::time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+            if (time)
+            {
+                std::time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+                std::string timeString = std::ctime(&time);
 
-            return std::ctime(&time);
+                return "[" + timeString + "]";
+            }
+            //Idk if this is necessary but it probably doesn't hurt
+            return "";
         }
     public:
         //Chooses some options for the logging library
-        LOG(bool showDebugs = false, bool STDoutErrors = false, bool displayTime = true)
+        LOG(bool showDebugs = true, bool STDoutErrors = false, bool displayTime = true)
         {
             properErrorOutput = !STDoutErrors;
             release = !showDebugs;
@@ -41,7 +47,7 @@ class LOG
         void Error(std::string ErrorMessage, std::string source = "ENGINE")
         {
             //Calculate what the output string is
-            std::string outputString = "[" + getTime() + "][ERROR][" + source + "]: " + ErrorMessage;
+            std::string outputString = getTime() + "[ERROR][" + source + "]: " + ErrorMessage;
 
             //Then send it to whichever output the user has selected
             if (properErrorOutput)
@@ -53,6 +59,7 @@ class LOG
         //Outputs a debug message
         void Debug(std::string DebugMessage, std::string source = "ENGINE")
         {
-            std::cout << "[" << getTime() << "][DEBUG][" << source << "]: " << DebugMessage;
+            if (!release)
+                std::cout  << getTime() << "[DEBUG][" << source << "]: " << DebugMessage;
         }
 };

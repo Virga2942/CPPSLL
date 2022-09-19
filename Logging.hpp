@@ -18,7 +18,7 @@ class LOG
 {
     private:
         bool properErrorOutput;
-        bool release;
+        bool debugs;
         bool time;
 
         //Returns the current date and time as a std::string
@@ -28,6 +28,7 @@ class LOG
             {
                 std::time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
                 std::string timeString = std::ctime(&time);
+                timeString.pop_back();
 
                 return "[" + timeString + "]";
             }
@@ -39,7 +40,7 @@ class LOG
         LOG(bool showDebugs = true, bool STDoutErrors = false, bool displayTime = true)
         {
             properErrorOutput = !STDoutErrors;
-            release = !showDebugs;
+            debugs = showDebugs;
             time = displayTime;
         }
 
@@ -59,7 +60,7 @@ class LOG
         //Outputs a debug message
         void Debug(std::string DebugMessage, std::string source = "ENGINE")
         {
-            if (!release)
-                std::cout  << getTime() << "[DEBUG][" << source << "]: " << DebugMessage;
+            if (debugs)
+                std::cout << getTime() << "[DEBUG][" << source << "]: " << DebugMessage << std::endl;
         }
 };
